@@ -33,11 +33,27 @@ class TemplateCreator {
             'strict_variables' => true,
             'auto_reload'=>true
         ));
-		$twig->addExtension(new \Twig\Extra\String\StringExtension());
-        $twig->addFunction(new \Twig\TwigFunction('chr', function ($i) {
-            return chr($i);
-        }));       
 		
+		
+		// register StringExtension to expose |u filter (which provides wordwrap function, among others)
+		$twig->addExtension(new \Twig\Extra\String\StringExtension());
+		
+		
+		// register 'chr' function
+        $twig->addFunction(new \Twig\TwigFunction('chr', function ($i) {
+            	return chr($i);
+        	}));    
+        
+        
+		// register filter to convert html to escpos (handles B, STRONG and U tags)
+		$twig->addFilter(
+				new \Twig\TwigFilter('html2escpos', function ($string) {
+					  return str_replace(['<b>', '<strong>', '</b>', '</strong>', '<u>', '</u>'], [chr(27).'E1', chr(27).'E1', chr(27).'E0', chr(27).'E0', chr(27).'-1', chr(27).'-0'], strip_tags($string, '<b><strong><u>'));
+				})
+			);
+
+
+		// loading template
 		$this->_template = $twig->load($twigfile);
 	}
     
