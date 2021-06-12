@@ -48,7 +48,19 @@ class TemplateCreator {
 		$this->_template = $twig->load($twigfile);
 	}
 	
+    
+    
+    /** 
+     * Get Twig template
+     *
+     * @return \Twig\Twig\TemplateWrapper
+     */
+    public function getTemplate()
+    {
+        return $this->_template;
+    }
 	
+    
 	
 	/**
 	 * Register functions
