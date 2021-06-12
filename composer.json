@@ -8,7 +8,8 @@
 	"require" : {
 		"php": ">= 7.2",
 		"twig/twig" : "^3.0.0",
-        "twig/string-extra":"^3.0.0"
+        "twig/string-extra":"^3.0.0",
+		"net-tools/escpos": "^1.0.0"
 	},
     
 	"autoload": {

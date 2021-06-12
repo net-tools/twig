@@ -14,6 +14,25 @@ namespace Nettools\Twig;
  */
 class EscPosTemplateCreator extends TemplateCreator {
 
+	protected $_driver;
+	
+	
+	/**
+	 * Constructor
+	 *
+	 * @param string $loadfilepath Path to search twig files into
+	 * @param string $twigfile Filename of template to load 
+	 * @param string|bool $twigcache
+	 */
+	public function __construct($loadfilepath, $twigfile, $twigcache, \Nettools\EscPos\Drivers\Driver $driver)
+	{
+		parent::__construct($loadfilepath, $twigfile, $twigcache);
+		
+		$this->driver = $driver;
+	}
+	
+	
+	
 	/**
 	 * Register globals
 	 *
@@ -45,6 +64,7 @@ class EscPosTemplateCreator extends TemplateCreator {
 		parent::registerFilters($twig);
 		
 		
+		
 		// register filter to convert html to escpos (handles B, STRONG and U tags)
 		$twig->addFilter(
 				new \Twig\TwigFilter('html2escpos', function ($string) {
@@ -60,12 +80,14 @@ class EscPosTemplateCreator extends TemplateCreator {
 				}, ['is_safe' => ['all']])
 			);
 
+		
 		// register filter to output UNDERLINED text
 		$twig->addFilter(
 				new \Twig\TwigFilter('underline', function ($string) {
 					  return chr(27).'-1' . $string . chr(27).'-0';
 				}, ['is_safe' => ['all']])
 			);
+		
 		
 		// register filter to output HEAVY UNDERLINED text
 		$twig->addFilter(
@@ -74,12 +96,14 @@ class EscPosTemplateCreator extends TemplateCreator {
 				}, ['is_safe' => ['all']])
 			);
 		
+		
 		// register filter to output CENTERED text
 		$twig->addFilter(
 				new \Twig\TwigFilter('center', function ($string) {
 					  return chr(27).'a1' . $string . "\n" . chr(27).'a0';
 				}, ['is_safe' => ['all']])
 			);
+		
 		
 		// register filter to output RIGHT-ALIGNED text
 		$twig->addFilter(
@@ -88,10 +112,27 @@ class EscPosTemplateCreator extends TemplateCreator {
 				}, ['is_safe' => ['all']])
 			);
 		
+		
 		// register filter to output FONTB text (reverting to FONTA at the end of output)
 		$twig->addFilter(
 				new \Twig\TwigFilter('fontB', function ($string) {
 					  return chr(27).'M1' . $string . "\n" . chr(27).'M0';
+				}, ['is_safe' => ['all']])
+			);
+		
+		
+		// register filter for barcode output
+		$twig->addFilter(
+				new \Twig\TwigFilter('barcode', function ($string, $kind) {
+					  return $this->_driver->barcode($string, $kind);
+				}, ['is_safe' => ['all']])
+			);
+		
+		
+		// register filter for qrcode output
+		$twig->addFilter(
+				new \Twig\TwigFilter('qrcode', function ($string, $kind, $size = 3, $ec = NULL) {
+					  return $this->_driver->qrcode($string, $kind, $size, $ec);
 				}, ['is_safe' => ['all']])
 			);
 	}
