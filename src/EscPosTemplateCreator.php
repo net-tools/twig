@@ -54,7 +54,7 @@ class EscPosTemplateCreator extends TemplateCreator {
 		$txt = iconv('utf8', $this->_codepage . '//IGNORE', $txt);
 		
 		// handle special sections
-		return preg_replace_callback('#///IMG///([^)]+)#', function(array $matches){ return base64_decode($matches[1]); }, $txt);
+		return preg_replace_callback('#///IMG///\(([^)]+)\)#', function(array $matches){ return base64_decode($matches[1]); }, $txt);
 	}
 	
     
