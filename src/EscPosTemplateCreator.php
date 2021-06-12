@@ -15,6 +15,7 @@ namespace Nettools\Twig;
 class EscPosTemplateCreator extends TemplateCreator {
 
 	protected $_driver;
+	protected $_codepage;
 	
 	
 	/**
@@ -24,15 +25,31 @@ class EscPosTemplateCreator extends TemplateCreator {
 	 * @param string $twigfile Filename of template to load 
 	 * @param string|bool $twigcache
 	 */
-	public function __construct($loadfilepath, $twigfile, $twigcache, \Nettools\EscPos\Drivers\Driver $driver)
+	public function __construct($loadfilepath, $twigfile, $twigcache, \Nettools\EscPos\Drivers\Driver $driver, $codepage = 'cp858')
 	{
 		parent::__construct($loadfilepath, $twigfile, $twigcache);
 		
 		$this->_driver = $driver;
+		$this->_codepage = $codepage;
 	}
 	
 	
 	
+	/**
+	 * Render the Twig template and perform iconv to the target codepage
+	 * 
+	 * @param array $args Array of vars to be used in twig template
+	 * @return string
+	 */
+	public function render($args)
+	{
+		$txt = parent::render($args);
+		
+		return iconv('utf8', $this->_codepage . '//IGNORE', $txt);
+	}
+	
+    
+    
 	/**
 	 * Register globals
 	 *

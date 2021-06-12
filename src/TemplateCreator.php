@@ -48,6 +48,19 @@ class TemplateCreator {
 		$this->_template = $twig->load($twigfile);
 	}
 	
+	
+	
+	/**
+	 * Render the Twig template
+	 * 
+	 * @param array $args Array of vars to be used in twig template
+	 * @return string
+	 */
+	public function render($args)
+	{
+		return $this->getTemplate()->render($args);
+	}
+	
     
     
     /** 
