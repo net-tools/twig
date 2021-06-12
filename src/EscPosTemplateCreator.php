@@ -135,6 +135,32 @@ class EscPosTemplateCreator extends TemplateCreator {
 					  return $this->_driver->qrcode($string, $kind, $size, $ec);
 				}, ['is_safe' => ['all']])
 			);
+		
+		
+		// register filter for image output
+		$twig->addFilter(
+				new \Twig\TwigFilter('image', function (\Twig\Environment $env, $string, $dither = 0.8) {
+					
+                    // search image in Twig FilesystemLoader
+                    $loader = $env->getLoader();
+                    if ( $loader instanceof \Twig\Loader\FilesystemLoader )
+                    {
+                        // search all paths registered in Twig FilesystemLoader
+                        foreach ( $loader->getPaths() as $path )
+                            if ( file_exists($path . '/' . $string) )
+                            {
+                                if ( strpos($string, '.png') > 0 )
+                                    return $this->_driver->image(imagecreatefrompng($path . '/' . $string), $dither);
+                                else
+                                    return $this->_driver->image(imagecreatefromjpeg($path . '/' . $string), $dither);
+                            }
+                        
+                        return "** Image not found in Twig FilesystemLoader **";
+                    }
+                    else
+                        return "** Twig loader unsupported **";       
+				}, ['needs_environment' => true, 'is_safe' => ['all']])
+			);
 	}
     
     
