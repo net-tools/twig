@@ -15,6 +15,27 @@ namespace Nettools\Twig;
 class EscPosTemplateCreator extends TemplateCreator {
 
 	/**
+	 * Register globals
+	 *
+	 * @param \Twig\Environment $twig
+	 */
+	public function registerGlobals(\Twig\Environment $twig)
+	{
+		$twig->addGlobal('bold', chr(27).'E1');
+		$twig->addGlobal('nobold', chr(27).'E0');
+		$twig->addGlobal('underline', chr(27).'-1');
+		$twig->addGlobal('underlineheavy', chr(27).'-2');
+		$twig->addGlobal('nounderline', chr(27).'-0');
+		$twig->addGlobal('center', chr(27).'a1');
+		$twig->addGlobal('right', chr(27).'a2');
+		$twig->addGlobal('left', chr(27).'a0');
+		$twig->addGlobal('fontA', chr(27).'M0');
+		$twig->addGlobal('fontB', chr(27).'M1');
+	}
+    
+    
+    
+	/**
 	 * Register filters
 	 *
 	 * @param \Twig\Environment $twig

@@ -42,7 +42,7 @@ class TemplateCreator {
 		// register functions and filters
 		$this->registerFunctions($twig);
 		$this->registerFilters($twig);
-		
+        $this->registerGlobals($twig);
 
 		// loading template
 		$this->_template = $twig->load($twigfile);
@@ -83,6 +83,18 @@ class TemplateCreator {
 	 * @param \Twig\Environment $twig
 	 */
 	public function registerFilters(\Twig\Environment $twig)
+	{
+		
+	}
+    
+	
+	
+	/**
+	 * Register globals
+	 *
+	 * @param \Twig\Environment $twig
+	 */
+	public function registerGlobals(\Twig\Environment $twig)
 	{
 		
 	}
