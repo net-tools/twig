@@ -39,22 +39,40 @@ class TemplateCreator {
 		$twig->addExtension(new \Twig\Extra\String\StringExtension());
 		
 		
-		// register 'chr' function
-        $twig->addFunction(new \Twig\TwigFunction('chr', function ($i) {
-            	return chr($i);
-        	}));    
-        
-        
-		// register filter to convert html to escpos (handles B, STRONG and U tags)
-		$twig->addFilter(
-				new \Twig\TwigFilter('html2escpos', function ($string) {
-					  return str_replace(['<b>', '<strong>', '</b>', '</strong>', '<u>', '</u>'], [chr(27).'E1', chr(27).'E1', chr(27).'E0', chr(27).'E0', chr(27).'-1', chr(27).'-0'], strip_tags($string, '<b><strong><u>'));
-				})
-			);
-
+		// register functions and filters
+		$this->registerFunctions($twig);
+		$this->registerFilters($twig);
+		
 
 		// loading template
 		$this->_template = $twig->load($twigfile);
+	}
+	
+	
+	
+	/**
+	 * Register functions
+	 *
+	 * @param \Twig\Environment $twig
+	 */
+	public function registerFunctions(\Twig\Environment $twig)
+	{
+		// register 'chr' function
+        $twig->addFunction(new \Twig\TwigFunction('chr', function ($i) {
+            	return chr($i);
+        	})); 
+	}
+    
+	
+	
+	/**
+	 * Register filters
+	 *
+	 * @param \Twig\Environment $twig
+	 */
+	public function registerFilters(\Twig\Environment $twig)
+	{
+		
 	}
     
 }
