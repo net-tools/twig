@@ -18,6 +18,11 @@ class EscPosTemplateCreator extends TemplateCreator {
 	protected $_codepage;
 	
 	
+	const IMAGE_TAG = '///IMG///';
+	
+	
+	
+	
 	/**
 	 * Constructor
 	 *
@@ -45,7 +50,11 @@ class EscPosTemplateCreator extends TemplateCreator {
 	{
 		$txt = parent::render($args);
 		
-		return iconv('utf8', $this->_codepage . '//IGNORE', $txt);
+		// convert text to target codepage
+		$txt = iconv('utf8', $this->_codepage . '//IGNORE', $txt);
+		
+		// handle special sections
+		return preg_replace_callback('#///IMG///([^)]+)#', function(array $matches){ return base64_decode($matches[1]); }, $txt);
 	}
 	
     
@@ -167,9 +176,13 @@ class EscPosTemplateCreator extends TemplateCreator {
                             if ( file_exists($path . '/' . $string) )
                             {
                                 if ( strpos($string, '.png') > 0 )
-                                    return $this->_driver->image(imagecreatefrompng($path . '/' . $string), $dither);
+                                    $img = $this->_driver->image(imagecreatefrompng($path . '/' . $string), $dither);
                                 else
-                                    return $this->_driver->image(imagecreatefromjpeg($path . '/' . $string), $dither);
+                                    $img = $this->_driver->image(imagecreatefromjpeg($path . '/' . $string), $dither);
+								
+								
+								// encode image so that iconv process to be done later won't mess with binary image data
+								return self::IMAGE_TAG . '(' . base64_encode($img) . ')';
                             }
                         
                         return "** Image not found in Twig FilesystemLoader **";
