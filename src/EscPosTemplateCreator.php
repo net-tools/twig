@@ -28,7 +28,7 @@ class EscPosTemplateCreator extends TemplateCreator {
 	{
 		parent::__construct($loadfilepath, $twigfile, $twigcache);
 		
-		$this->driver = $driver;
+		$this->_driver = $driver;
 	}
 	
 	
