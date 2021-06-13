@@ -15,6 +15,7 @@ namespace Nettools\Twig;
 class EscPosTemplateCreator extends TemplateCreator {
 
 	protected $_driver;
+	protected $_printer;
 	protected $_codepage;
 	
 	
@@ -35,6 +36,7 @@ class EscPosTemplateCreator extends TemplateCreator {
 		parent::__construct($loadfilepath, $twigfile, $twigcache);
 		
 		$this->_driver = $driver;
+		$this->_printer = new \Nettools\EscPos\Printer($this->_driver);
 		$this->_codepage = $codepage;
 	}
 	
@@ -175,11 +177,8 @@ class EscPosTemplateCreator extends TemplateCreator {
                         foreach ( $loader->getPaths() as $path )
                             if ( file_exists($path . '/' . $string) )
                             {
-                                if ( strpos($string, '.png') > 0 )
-                                    $img = $this->_driver->image(imagecreatefrompng($path . '/' . $string), $dither);
-                                else
-                                    $img = $this->_driver->image(imagecreatefromjpeg($path . '/' . $string), $dither);
-								
+								// get image as escpos, loading it from file with appropriate function
+								$img = $this->_printer->imageFile($path . '/' . $string, $dither);
 								
 								// encode image so that iconv process to be done later won't mess with binary image data
 								return self::IMAGE_TAG . '(' . base64_encode($img) . ')';
@@ -205,10 +204,8 @@ class EscPosTemplateCreator extends TemplateCreator {
                         foreach ( $loader->getPaths() as $path )
                             if ( file_exists($path . '/' . $string) )
                             {
-                                if ( strpos($string, '.png') > 0 )
-                                    $img = $this->_driver->bwimage(imagecreatefrompng($path . '/' . $string));
-                                else
-                                    $img = $this->_driver->bwimage(imagecreatefromjpeg($path . '/' . $string));
+								// get black & white image as escpos, loading it from file with appropriate function
+								$img = $this->_printer->bwimageFile($path . '/' . $string);
 								
 								
 								// encode image so that iconv process to be done later won't mess with binary image data
