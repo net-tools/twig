@@ -191,6 +191,36 @@ class EscPosTemplateCreator extends TemplateCreator {
                         return "** Twig loader unsupported **";       
 				}, ['needs_environment' => true, 'is_safe' => ['all']])
 			);
+		
+		
+		// register filter for black & white image output (no dithering)
+		$twig->addFilter(
+				new \Twig\TwigFilter('bwimage', function (\Twig\Environment $env, $string) {
+					
+                    // search image in Twig FilesystemLoader
+                    $loader = $env->getLoader();
+                    if ( $loader instanceof \Twig\Loader\FilesystemLoader )
+                    {
+                        // search all paths registered in Twig FilesystemLoader
+                        foreach ( $loader->getPaths() as $path )
+                            if ( file_exists($path . '/' . $string) )
+                            {
+                                if ( strpos($string, '.png') > 0 )
+                                    $img = $this->_driver->bwimage(imagecreatefrompng($path . '/' . $string));
+                                else
+                                    $img = $this->_driver->bwimage(imagecreatefromjpeg($path . '/' . $string));
+								
+								
+								// encode image so that iconv process to be done later won't mess with binary image data
+								return self::IMAGE_TAG . '(' . base64_encode($img) . ')';
+                            }
+                        
+                        return "** Image not found in Twig FilesystemLoader **";
+                    }
+                    else
+                        return "** Twig loader unsupported **";       
+				}, ['needs_environment' => true, 'is_safe' => ['all']])
+			);
 	}
     
     
