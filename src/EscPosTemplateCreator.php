@@ -6,11 +6,11 @@ namespace Nettools\Twig;
 
 
 /**
- * Class for a Twig template creator
+ * Class for a Twig template creator for an escpos document
  *
  * Registers :
- * - StringExtension to use |u filter
- * - chr function to create string from ascii int values
+ * - globals for bold, underline, alignements and fonts begin and end escpos commands
+ * - filters to tag bold, underline, alignment and font text ; barcode and qrcodes ; image, bwimage, b64image and b64bwimage for image output
  */
 class EscPosTemplateCreator extends TemplateCreator {
 
@@ -30,6 +30,8 @@ class EscPosTemplateCreator extends TemplateCreator {
 	 * @param string $loadfilepath Path to search twig files into
 	 * @param string $twigfile Filename of template to load 
 	 * @param string|bool $twigcache
+	 * @param \Nettools\EscPos\Drivers\Driver $driver Driver object to output through ; mainly used for graphics
+	 * @param string $codepage Supported printer codepage to convert utf8 rendered template to
 	 */
 	public function __construct($loadfilepath, $twigfile, $twigcache, \Nettools\EscPos\Drivers\Driver $driver, $codepage = 'cp858')
 	{
