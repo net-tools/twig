@@ -165,6 +165,44 @@ class EscPosTemplateCreator extends TemplateCreator {
 			);
 		
 		
+		// register filter for inline base64 image output
+		$twig->addFilter(
+				new \Twig\TwigFilter('b64image', function (\Twig\Environment $env, $string, $dither = 0.8) {
+
+					// decode inline base64image
+					$imgdec = imagecreatefromstring(base64_decode($string));
+					if ( !$imgdec )
+						return "Base64-encoded image can't be read";
+					
+					
+					// get image as escpos, loading it from file with appropriate function
+					$img = $this->_printer->image($imgdec, $dither);
+
+					// encode image so that iconv process to be done later won't mess with binary image data
+					return self::IMAGE_TAG . '(' . base64_encode($img) . ')';
+				}, ['needs_environment' => true, 'is_safe' => ['all']])
+			);
+		
+		
+		// register filter for inline base64 black & white image output
+		$twig->addFilter(
+				new \Twig\TwigFilter('b64bwimage', function (\Twig\Environment $env, $string) {
+
+					// decode inline base64image
+					$imgdec = imagecreatefromstring(base64_decode($string));
+					if ( !$imgdec )
+						return "Base64-encoded black & white image can't be read";
+					
+					
+					// get image as escpos, loading it from file with appropriate function
+					$img = $this->_printer->bwimage($imgdec);
+
+					// encode image so that iconv process to be done later won't mess with binary image data
+					return self::IMAGE_TAG . '(' . base64_encode($img) . ')';
+				}, ['needs_environment' => true, 'is_safe' => ['all']])
+			);
+		
+		
 		// register filter for image output
 		$twig->addFilter(
 				new \Twig\TwigFilter('image', function (\Twig\Environment $env, $string, $dither = 0.8) {
