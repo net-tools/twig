@@ -98,7 +98,7 @@ class EscPosTemplateCreator extends TemplateCreator {
 		// register filter to convert html to escpos (handles B, STRONG and U tags)
 		$twig->addFilter(
 				new \Twig\TwigFilter('html2escpos', function ($string) {
-					  return str_replace(['<b>', '<strong>', '</b>', '</strong>', '<u>', '</u>'], [chr(27).'E1', chr(27).'E1', chr(27).'E0', chr(27).'E0', chr(27).'-1', chr(27).'-0'], strip_tags(str_replace("\r\n", "\n", $string), '<b><strong><u>'));
+					  return str_replace(['<b>', '<strong>', '</b>', '</strong>', '<u>', '</u>', '<p>', '</p>'], [chr(27).'E1', chr(27).'E1', chr(27).'E0', chr(27).'E0', chr(27).'-1', chr(27).'-0', '', "\n"], strip_tags(str_replace('<br>', "\n", preg_replace('/¤+/', ' ', str_replace(["\r\n", "\n"], '¤', $string))), '<b><strong><u><p>'));
 				}, ['is_safe' => ['all']])
 			);
 		
